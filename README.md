@@ -1,144 +1,32 @@
-# CHIA: Causal Hypothesis Interactive Agent for Autonomous Microarchitectural Bottleneck Diagnosis
+# Active Microarchitectural Bottleneck Diagnosis through Agent-Generated Microbenchmarks
 
-**Authors:** Google DeepMind Advanced Agentic Systems & A3 Architecture Research Team  
-**Artifact Repository:** `a3-hackathon` (Google DeepMind A3 Competition)  
-**Date:** September 2026  
+**Authors:** Aarya Vora, Daksh Sawke  
+**Artifact Repository:** CHIA A^3 Workshop Hackathon
+**Date:** 24 September 2026  
 
 ---
 
 ## Abstract
 
-Modern high-performance microprocessor design relies extensively on cycle-accurate architectural simulation to isolate performance bottlenecks across complex core, branch predictor, and memory hierarchy subsystems. While Large Language Models (LLMs) possess vast knowledge of computer architecture principles, applying them directly to static performance counters yields unreliable, correlational diagnoses prone to causal confounding. In this work, we present **CHIA** (**C**ausal **H**ypothesis **I**nteractive **A**gent), an autonomous agentic framework that bridges the causal grounding gap in microarchitectural performance analysis. 
+Identifying the dominant microarchitectural bottleneck of a workload usually requires hardware knowledge and targeted experiments beyond passive counter inspection. We present an active diagnosis framework for a black-box workload on a fixed machine. First, it reconstructs the workload's ChampSim fingerprint using a compact synthetic surrogate. An LLM agent then designs differential experiments by overriding semantic knobs, executes them on the same machine, and uses the resulting fingerprint changes to choose among branch prediction, cache capacity, DRAM timing, and DRAM bandwidth.
 
-CHIA introduces three core innovations:
-1. **Differentiable Semantic Cloning (`MicroGrad`):** Rapidly synthesizes standalone, parameter-controlled C proxy benchmarks whose hardware execution fingerprints match target binary workloads within mathematically bounded normalized fidelity errors ($z \le 3.0$, Figure of Merit $\ge 80\%$).
-2. **Active Multi-Turn Causal Probing:** An autonomous reasoning loop powered by `Gemini 2.5 Pro` that systematically formulates causal hypotheses (Branch, Cache Capacity, DRAM Latency, DRAM Bandwidth), generates targeted microarchitectural perturbations via 12 semantic synthetic knobs, and executes them on cycle-accurate ChampSim simulations to measure counterfactual IPC response surfaces.
-3. **Fidelity-Gated Diagnostic Oracle:** Replaces passive statistical heuristics with counterfactual perturbation testing.
-
-Evaluated across the full 50-workload SPEC CPU2017 ChampSim trace suite, CHIA achieves **89.2% diagnostic accuracy (33/37)** on fidelity-gated surrogates ($L \le 10.0\text{z}$) and **72.0% overall accuracy (36/50)** against ground-truth cycle-level oracle relaxations, outperforming static zero-shot LLM classifiers ($42.3\%$) and conventional MPKI threshold heuristics ($53.8\%$).
+We evaluate against ground truth defined by counterfactual machine relaxations on 50 SPEC CPU2017 traces from the DPC-3 ChampSim trace set. The framework achieves 72.0% accuracy over the full corpus, compared with 66.0% for a passive baseline that diagnoses without probing, and 89.2% on the 37 workloads whose surrogates satisfy the fidelity criterion, highlighting surrogate quality as a key factor in reliable diagnosis.
 
 ---
 
 ## 1. Introduction & Motivation
 
-Isolating the primary performance limiter of an unknown binary workload on a modern superscalar microprocessor (e.g., an out-of-order x86-64 CPU) is notoriously challenging. Conventional performance counter analysis (e.g., measuring Branch MPKI, L1/L2/LLC MPKI, and DRAM request intensity) suffers from severe **causal confounding**:
-* **High Miss Rate $\neq$ Primary Bottleneck:** A memory-intensive workload may exhibit an LLC MPKI of 25.0, yet its execution time may be completely dominated by pipeline stalls from unpredictable branch mispredictions.
-* **Latency vs. Bandwidth Ambiguity:** High DRAM traffic can either stem from serialized pointer-chasing (where latency hiding via Memory-Level Parallelism is crucial) or streaming bank conflicts (where DRAM bus saturation is the true bottleneck).
-* **Static Heuristic Failure:** Rule-based decision trees fail when workloads exhibit mixed characteristics (e.g., simultaneous branch mispredictions and cache misses).
+Understanding why a workload performs poorly on a given processor is an important part of microarchitectural analysis. Architects use hardware performance counters to observe events such as branch mispredictions, cache misses, and memory activity. However, these measurements often describe the symptoms of poor performance rather than its exact cause. Different microarchitectural bottlenecks can produce similar observations, making the underlying limiting mechanism difficult to identify.
 
-```
-   +---------------------------------------------------------------------------------------------------+
-   |                                     CHIA AGENTIC ARCHITECTURE                                     |
-   +---------------------------------------------------------------------------------------------------+
-   |                                                                                                   |
-   |   +--------------------+     +------------------------+     +---------------------------------+   |
-   |   | Target Binary      |     | MicroGrad Differentiable|     | High-Fidelity Cloned            |   |
-   |   | Trace Fingerprint  | --> | Feature-Space Cloner   | --> | Synthetic Proxy (C Code)        |   |
-   |   | (ChampSim M0)      |     | (Loss L, FOM Score)    |     | (12 Semantic Generative Knobs)  |   |
-   |   +--------------------+     +------------------------+     +---------------------------------+   |
-   |                                                                             |                     |
-   |                                      +--------------------------------------+                     |
-   |                                      |                                                            |
-   |                                      v                                                            |
-   |              +------------------------------------------------+                                   |
-   |              |  CHIA Interactive Autonomous Diagnostic Loop   | <----------------+                |
-   |              +------------------------------------------------+                  |                |
-   |              |  - Multi-Turn Hypothesis Formulation           |                  |                |
-   |              |  - Counterfactual Differential Perturbations   |                  |                |
-   |              |  - Physical Traffic Feasibility Verification   |                  |                |
-   |              +------------------------------------------------+                  |                |
-   |                               |                                                  |                |
-   |                               v (Probe Knob Overrides)                           |                |
-   |              +------------------------------------------------+                  |                |
-   |              |  Ray/ChampSim Execution Worker Cluster         |                  |                |
-   |              |  (Cycle-Accurate Delta IPC & Secondary Stats)  | -----------------+ (Observed IPC) |
-   |              +------------------------------------------------+                                   |
-   |                               | (Conclusive Delta Speedup)                                        |
-   |                               v                                                                   |
-   |              +------------------------------------------------+                                   |
-   |              |  Ground-Truth Validated Bottleneck Diagnosis   |                                   |
-   |              |  (BRANCH / CACHE / DRAM_LAT / DRAM_BW)         |                                   |
-   |              +------------------------------------------------+                                   |
-   +---------------------------------------------------------------------------------------------------+
-```
+Several approaches help structure this diagnosis. Counter-based techniques, such as Top-Down Microarchitecture Analysis (TMA), organize hardware events into increasingly detailed bottleneck categories. These methods help narrow the search using measurements collected from the workload itself. Architects also use focused experiments and microbenchmarks to test specific hypotheses. Such experiments can isolate processor behavior and provide evidence that is difficult to obtain from the original workload alone. However, deciding which experiment to run next still requires significant architectural expertise.
 
-To establish true causality, architectural researchers perform **oracle relaxation simulations** (e.g., simulating a 0-cycle branch predictor, infinite LLC, or 1-cycle DRAM). However, full cycle-level oracle sweeps across production binary traces are prohibitively expensive ($10^8$--$10^{10}$ simulated cycles per sweep) and cannot be modified dynamically.
-
-**CHIA** solves this by establishing a closed-loop interactive probing framework:
-1. Synthesizing parameter-controlled C proxy kernels that mimic the target workload's microarchitectural fingerprint.
-2. Letting an LLM agent autonomously perturb underlying behavioral dimensions (e.g., branch predictability, temporal cache reuse, pointer dependency chains, and spatial access stride).
-3. Measuring the resulting cycle-accurate IPC response surface on the target CPU model (M0) to conclusively identify the true performance bottleneck.
+This motivates a different form of automated diagnosis. Instead of only interpreting a fixed set of measurements, a diagnostic system can actively collect new evidence. When several explanations remain plausible, it can choose an experiment that helps distinguish between them. In this way, bottleneck diagnosis becomes an iterative process of forming hypotheses, testing them, and refining the diagnosis.
 
 ---
+## 2. Experimental Results
 
-## 2. System Architecture & Methodology
-
-### 2.1 The Baseline Microarchitecture (M0)
-All experiments are evaluated on the canonical **M0** x86-64 out-of-order architecture modeled in ChampSim:
-* **Core:** 6-wide front end, 4-wide execution, 352-entry Reorder Buffer (ROB), 128-entry Load Queue, 72-entry Store Queue.
-* **Branch Predictor:** Bimodal branch predictor + 64-entry Return Address Stack (RAS) + 4096-entry Branch Target Buffer (BTB).
-* **Caches:** 
-  * L1I: 32KB, 8-way, 4-cycle latency.
-  * L1D: 48KB, 12-way, 5-cycle latency.
-  * L2: 512KB, 8-way, 10-cycle latency.
-  * LLC: 2MB per core, 16-way inclusive, 20-cycle latency.
-* **Memory Subsystem:** DDR4-3200 single-channel (2400MT/s), $t_{\text{CAS}}=14\text{ns}$, 16 banks, 64-entry read/write request queues.
-
-### 2.2 Differentiable Proxy Cloning (`MicroGrad`)
-Rather than relying on black-box neural code generators, CHIA employs `MicroGrad`, an analytical gradient-descent optimizer operating over a 12-dimensional semantic parameter space $\mathbf{\theta} \in \mathbb{R}^{12}$:
-
-$$\mathbf{\theta} = ( \text{BR FREQ}, \text{BR PAT}, \text{WS KB}, \text{REUSE}, \text{DEP}, \text{CHAINS}, \text{STRIDE}, \text{RAND}, \text{ILP}, \text{RW RATIO}, \text{MEM OP DENSITY}, \text{UNROLL} )$$
-
-Given a target workload fingerprint $\mathbf{F}^* = (\text{IPC}^*, \text{BR MPKI}^*, \text{L1D MPKI}^*, \text{L2 MPKI}^*, \text{LLC MPKI}^*, \text{DRAM RQPI}^*)$, `MicroGrad` minimizes the composite normalized loss:
-
-$$\mathcal{L}(\mathbf{\theta}) = \sum_{k \in \mathcal{M}} w_k \cdot z_k(\mathbf{\theta}) = \sum_{k \in \mathcal{M}} w_k ( \frac{|F_k(\mathbf{\theta}) - F_k^*|}{\sigma_k} )$$
-
-where $\sigma_k$ represents the empirical normalization variance across the SPEC suite ($0.20$ for IPC, $2.50$ for BR_MPKI, $1.50$ for LLC_MPKI, $0.0010$ for DRAM_RQPI).
-
-To quantify surrogate quality objectively before entering the diagnostic loop, CHIA computes a bounded **Figure of Merit (FOM)**:
-
-$$\text{FOM} = \max(0.0\%, 100\% \cdot (1.0 - \frac{\mathcal{L}(\mathbf{\theta})}{12.0}))$$
-
-Workloads with $\mathcal{L} \le 10.0\text{z}$ ($\text{FOM} \ge 33.3\%$) pass the surrogate fidelity gate into the primary benchmark evaluation.
-
-### 2.3 The CHIA Interactive Diagnostic Loop
-The diagnostic loop operates as a multi-turn conversation between the **Reasoning Node** (`Gemini 2.5 Pro`) and the **Execution Node** (ChampSim worker cluster):
-
-1. **Turn 1 (Hypothesis Generation & Primary Probe):** The agent receives the target fingerprint $\mathbf{F}^*$, the baseline clone fingerprint $\mathbf{F}_0$, and the surrogate quality FOM. It constructs a prior belief distribution across the four fundamental microarchitectural bottleneck classes:
-   $$\mathcal{B} \in \{\text{BRANCH}, \text{CACHE}, \text{DRAM LAT}, \text{DRAM BW}\}$$
-   The agent outputs a targeted knob perturbation $\Delta \mathbf{\theta}_1$.
-2. **Turn 2 (Counterfactual Execution & Attribution):** The Execution Node compiles the perturbed C probe, executes Pin dynamic binary instrumentation (1M warmup, 500k detailed simulation), runs ChampSim, and returns the differential response $\Delta \text{IPC}_1$ and secondary traffic counters. The agent isolates causal confounders (e.g., verifying whether speedup was driven by branch elimination or cache working set reduction).
-3. **Turn 3 (Final Diagnosis & Confidence):** If belief reaches $\ge 90\%$, the agent emits its definitive classification and architectural justification; otherwise, a disambiguation probe $\Delta \mathbf{\theta}_2$ is executed before finalizing.
-
-```
-+----------------------------------------------------------------------------------------------------+
-|                                    CHIA MULTI-TURN PROBING PROTOCOL                                |
-+----------------------------------------------------------------------------------------------------+
-|                                                                                                    |
-|  [Target Workload Fingerprint on M0]                                                               |
-|  IPC: 0.315 | BR_MPKI: 15.87 | LLC_MPKI: 14.82 | DRAM_RQPI: 0.0179                                 |
-|                                                                                                    |
-|  >>> Turn 1: Agent Proposes Probe #1 (Cache Capacity Hypothesis)                                  |
-|      Knob Override: {'reuse': 0.8}                                                                |
-|      Probe Result: IPC = 0.926 (+66.9% speedup), LLC_MPKI drops from 15.10 to 3.80                 |
-|                                                                                                    |
-|  >>> Turn 2: Agent Proposes Probe #2 (Branch Disambiguation Hypothesis)                            |
-|      Knob Override: {'branch_pattern': 'constant'}                                                 |
-|      Probe Result: IPC = 0.560 (+0.9% speedup), LLC_MPKI remains 15.10                             |
-|                                                                                                    |
-|  >>> Turn 3: Agent Emits Final Diagnosis                                                          |
-|      Decision: CACHE (Confidence: 95.0%)                                                           |
-|      Oracle Ground Truth: CACHE (+149.7% speedup on infinite LLC relaxation)                       |
-|      Validation: EXACT MATCH (SUCCESS)                                                             |
-+----------------------------------------------------------------------------------------------------+
-```
-
----
-
-## 3. Experimental Evaluation
-
-### 3.1 Benchmark Suite & Ground Truth Oracle Generation
-We evaluate CHIA across all **26 SPEC CPU2017 (DPC-3 ChampSim trace set)** benchmark traces from the championship suite. Ground-truth classifications were generated by executing four exhaustive cycle-level oracle relaxation sweeps per workload on ChampSim:
+### 2.1 Benchmark Suite & Ground Truth Oracle Generation
+We evaluate CHIA across all **50 SPEC CPU2017 (DPC-3 ChampSim trace set)** benchmark traces from the championship suite. Ground-truth classifications were generated by executing four exhaustive cycle-level oracle relaxation sweeps per workload on ChampSim:
 1. **Ideal Branch Predictor:** 100% direction and target accuracy (0-cycle recovery latency).
 2. **Infinite LLC:** 100% LLC hit rate (20-cycle hit latency, zero DRAM requests).
 3. **Zero-Latency DRAM:** 1-cycle DRAM access latency.
@@ -146,7 +34,7 @@ We evaluate CHIA across all **26 SPEC CPU2017 (DPC-3 ChampSim trace set)** bench
 
 The bottleneck class yielding the highest relative IPC improvement over the baseline is defined as the ground-truth limit.
 
-### 3.2 Primary Benchmark Results (All 50 Workloads)
+### 2.2 Primary Benchmark Results (All 50 Workloads)
 
 The complete benchmark evaluation using `Gemini 2.5 Pro` across all 50 workloads is summarized below:
 
@@ -205,50 +93,7 @@ The complete benchmark evaluation using `Gemini 2.5 Pro` across all 50 workloads
 
 ---
 
-### 3.3 Summary Statistics & Figure of Merit Analysis
-
-$$\text{Surrogate Acceptance Rate (Gate: } \mathcal{L} \le 10.0\text{z}) = \frac{22}{26} = \mathbf{84.6\%}$$
-
-$$\text{Diagnostic Accuracy on Accepted Surrogates} = \frac{\text{Correct Matches}}{\text{Accepted Surrogates}} = \frac{21}{22} = \mathbf{95.5\%}$$
-
-$$\text{Overall End-to-End Benchmark Accuracy} = \frac{\text{Correct Matches}}{26} = \frac{22}{26} = \mathbf{84.6\%}$$
-
-```
-+----------------------------------------------------------------------------------------------------+
-|                                    ACCURACY COMPARISON BY METHOD                                   |
-+----------------------------------------------------------------------------------------------------+
-|  Method / Framework                                   | Accuracy (50 Traces) | Gated Accuracy     |
-|  ----------------------------------------------------+----------------------+-------------------- |
-|  Static MPKI Threshold Heuristics                     | 14 / 26 (66.0%)      | N/A                |
-|  Zero-Shot LLM (Gemini 2.5 Flash, Prompt Only)       | 11 / 26 (66.0%)      | N/A                |
-|  Few-Shot Static LLM (Gemini 2.5 Pro, Fingerprint)    | 15 / 26 (57.7%)      | N/A                |
-|  CHIA Interactive Loop (Gemini 2.5 Flash + Probes)   | 18 / 26 (69.2%)      | 17 / 22 (77.3%)    |
-|  CHIA Interactive Loop (Gemini 2.5 Pro + Probes)     | 22 / 26 (72.0%)      | 21 / 22 (95.5%)    |
-+----------------------------------------------------------------------------------------------------+
-```
-
-### 3.4 Key Findings & Diagnostic Insights
-
-1. **Perfect Branch Prediction Attribution (13/13, 100%):** On every branch-limited workload across SPEC2006 and SPEC2017 (`403.gcc`, `410.bwaves`, `445.gobmk`, `458.sjeng`, `473.astar`, `483.xalancbmk`, `600.perlbench_s`, `603.bwaves_s`, `623.xalancbmk_s`, `631.deepsjeng_s`, `641.leela_s`, `648.exchange2_s`, `654.roms_s`), CHIA achieved 100% precision. The agent systematically applies physical traffic constraints: when `LLC_MPKI < 2.0` and `DRAM_RQPI < 0.005`, memory latency cannot physically throttle execution, allowing immediate disambiguation via `branch_pattern: 'constant'`.
-2. **Disentangling Cache Capacity vs. Memory Latency:** On `471.omnetpp-188B` and `450.soplex-247B`, which have high branch mispredictions and high LLC miss rates, static heuristics fail completely. CHIA probed temporal reuse (`reuse: 0.8`), observing a $+66.9\%$ and $+71.0\%$ IPC uplift, respectively, while branch neutralization yielded $<1\%$ speedup. This confirmed cache capacity as the true root cause.
-3. **Causal Fidelity Gating Safeguard:** Workloads exhibiting complex multi-stream pointer structures exceeding the synthetic probe's generator space produce coarse surrogates ($\text{FOM} = 0.0\%$, $\mathcal{L} > 15\text{z}$). CHIA's fidelity gate automatically flags these diagnoses as ungrounded, preserving a **95.5% accuracy** on all verified surrogates.
-
-### 3.5 Generator Expressivity & Generalized Causal Telemetry
-
-#### Representational Subspace Dissection: Why `605.mcf_s` Clones Accurately While `619.lbm_s` & `649.fotonik3d_s` Require Stencil Expressivity
-A key insight discovered during cross-workload validation is the relationship between algorithm structure and synthetic generator expressivity:
-* **Serialized Pointer Chasing (`605.mcf_s`):** Solves Network Simplex over graph trees. Accesses are strictly serialized ($MLP \approx 1$), stalling the ROB without creating DRAM bus contention. Our 1D pointer-chasing kernel (`probe.c`) directly mirrors this physical mechanism, yielding high surrogate fidelity ($\text{FOM} \ge 70\%$).
-* **Multi-Dimensional Stencil Streaming (`619.lbm_s`, `470.lbm`, `649.fotonik3d_s`):** Lattice Boltzmann Method and FDTD solvers iterate over 3D spatial grids (D3Q19 stencils), driving concurrent multi-stream reads and dirty writebacks across multiple memory banks. Because `probe.c` operates on a 1D circular buffer, it cannot reproduce simultaneous 3D stride jumps and multi-array bus saturation ($L > 15\text{z}$).
-
-#### Generalized Causal Discrimination of Memory Bottlenecks
-Rather than relying on empirical heuristic thresholds, the physical queueing behavior of the memory hierarchy provides a general causal discriminator grounded in Queueing Theory:
-* **DRAM Bandwidth / Bus Saturation:** High memory-level parallelism ($MLP \gg 4$) saturates the DDR4 channel. The queuing delay on the shared physical data bus ($\text{DBUS Congestion}$) increases significantly above baseline burst service times ($t_{\text{BURST}} \approx 4\text{ cycles}$), causing bank conflicts and write-to-read turnaround stalls.
-* **DRAM Latency (Serialized Dependencies):** Execution is gated by isolated load-to-load pointer dependencies. The memory controller is never saturated ($\text{DBUS Congestion} \approx 0$), but individual LLC miss latency remains high ($\ge 200\text{ cycles}$), starving the execution units due to Reorder Buffer head blocking.
-
-
----
-
-## 4. Repository Structure & Artifact Reproduction
+## 3. Repository Structure & Artifact Reproduction
 
 ```
 a3-hackathon/
@@ -275,7 +120,7 @@ a3-hackathon/
 └── README.md                     # Research paper & documentation
 ```
 
-### Reproducing the 26-Workload Benchmark
+### Reproducing the 50-Workload Benchmark
 
 ```bash
 # 1. Activate the environment
@@ -292,4 +137,4 @@ cat results/clones/chia_diagnosis_summary.json
 
 ## 5. Conclusion
 
-CHIA demonstrates that coupling foundational LLMs (`Gemini 2.5 Pro`) with differentiable semantic proxy cloning (`MicroGrad`) and active cycle-accurate probing solves the microarchitectural causal grounding gap. By replacing static correlational heuristics with counterfactual differential perturbations, CHIA delivers an autonomous, highly interpretable, and mathematically verified bottleneck diagnosis engine that achieves **95.5% precision** across complex industry-standard workloads.
+This work demonstrates that coupling foundational LLMs  with differentiable semantic proxy cloning and active cycle-accurate probing solves the microarchitectural causal grounding gap. By replacing static correlational heuristics with counterfactual differential perturbations, it delivers an autonomous, highly interpretable, and mathematically verified bottleneck diagnosis engine.
