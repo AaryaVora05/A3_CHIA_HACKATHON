@@ -87,17 +87,17 @@ All experiments are evaluated on the canonical **M0** x86-64 out-of-order archit
 ### 2.2 Differentiable Proxy Cloning (`MicroGrad`)
 Rather than relying on black-box neural code generators, CHIA employs `MicroGrad`, an analytical gradient-descent optimizer operating over a 12-dimensional semantic parameter space $\mathbf{\theta} \in \mathbb{R}^{12}$:
 
-$$\mathbf{\theta} = \left( \text{BR\_FREQ}, \text{BR\_PAT}, \text{WS\_KB}, \text{REUSE}, \text{DEP}, \text{CHAINS}, \text{STRIDE}, \text{RAND}, \text{ILP}, \text{RW\_RATIO}, \text{MEM\_OP\_DENSITY}, \text{UNROLL} \right)$$
+$$\mathbf{\theta} = ( \text{BR FREQ}, \text{BR PAT}, \text{WS KB}, \text{REUSE}, \text{DEP}, \text{CHAINS}, \text{STRIDE}, \text{RAND}, \text{ILP}, \text{RW RATIO}, \text{MEM OP DENSITY}, \text{UNROLL} )$$
 
-Given a target workload fingerprint $\mathbf{F}^* = (\text{IPC}^*, \text{BR\_MPKI}^*, \text{L1D\_MPKI}^*, \text{L2\_MPKI}^*, \text{LLC\_MPKI}^*, \text{DRAM\_RQPI}^*)$, `MicroGrad` minimizes the composite normalized loss:
+Given a target workload fingerprint $\mathbf{F}^* = (\text{IPC}^*, \text{BR MPKI}^*, \text{L1D MPKI}^*, \text{L2 MPKI}^*, \text{LLC MPKI}^*, \text{DRAM RQPI}^*)$, `MicroGrad` minimizes the composite normalized loss:
 
-$$\mathcal{L}(\mathbf{\theta}) = \sum_{k \in \mathcal{M}} w_k \cdot z_k(\mathbf{\theta}) = \sum_{k \in \mathcal{M}} w_k \left( \frac{|F_k(\mathbf{\theta}) - F_k^*|}{\sigma_k} \right)$$
+$$\mathcal{L}(\mathbf{\theta}) = \sum_{k \in \mathcal{M}} w_k \cdot z_k(\mathbf{\theta}) = \sum_{k \in \mathcal{M}} w_k ( \frac{|F_k(\mathbf{\theta}) - F_k^*|}{\sigma_k} )$$
 
 where $\sigma_k$ represents the empirical normalization variance across the SPEC suite ($0.20$ for IPC, $2.50$ for BR_MPKI, $1.50$ for LLC_MPKI, $0.0010$ for DRAM_RQPI).
 
 To quantify surrogate quality objectively before entering the diagnostic loop, CHIA computes a bounded **Figure of Merit (FOM)**:
 
-$$\text{FOM} = \max\left(0.0\%, 100\% \cdot \left(1.0 - \frac{\mathcal{L}(\mathbf{\theta})}{12.0}\right)\right)$$
+$$\text{FOM} = \max(0.0\%, 100\% \cdot (1.0 - \frac{\mathcal{L}(\mathbf{\theta})}{12.0}))$$
 
 Workloads with $\mathcal{L} \le 10.0\text{z}$ ($\text{FOM} \ge 33.3\%$) pass the surrogate fidelity gate into the primary benchmark evaluation.
 
@@ -105,7 +105,7 @@ Workloads with $\mathcal{L} \le 10.0\text{z}$ ($\text{FOM} \ge 33.3\%$) pass the
 The diagnostic loop operates as a multi-turn conversation between the **Reasoning Node** (`Gemini 2.5 Pro`) and the **Execution Node** (ChampSim worker cluster):
 
 1. **Turn 1 (Hypothesis Generation & Primary Probe):** The agent receives the target fingerprint $\mathbf{F}^*$, the baseline clone fingerprint $\mathbf{F}_0$, and the surrogate quality FOM. It constructs a prior belief distribution across the four fundamental microarchitectural bottleneck classes:
-   $$\mathcal{B} \in \{\text{BRANCH}, \text{CACHE}, \text{DRAM\_LAT}, \text{DRAM\_BW}\}$$
+   $$\mathcal{B} \in \{\text{BRANCH}, \text{CACHE}, \text{DRAM LAT}, \text{DRAM BW}\}$$
    The agent outputs a targeted knob perturbation $\Delta \mathbf{\theta}_1$.
 2. **Turn 2 (Counterfactual Execution & Attribution):** The Execution Node compiles the perturbed C probe, executes Pin dynamic binary instrumentation (1M warmup, 500k detailed simulation), runs ChampSim, and returns the differential response $\Delta \text{IPC}_1$ and secondary traffic counters. The agent isolates causal confounders (e.g., verifying whether speedup was driven by branch elimination or cache working set reduction).
 3. **Turn 3 (Final Diagnosis & Confidence):** If belief reaches $\ge 90\%$, the agent emits its definitive classification and architectural justification; otherwise, a disambiguation probe $\Delta \mathbf{\theta}_2$ is executed before finalizing.
