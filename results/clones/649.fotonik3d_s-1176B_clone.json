@@ -1,0 +1,57 @@
+{
+  "workload": "649.fotonik3d_s-1176B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "target_fingerprint": {
+    "IPC": 0.3899231913322384,
+    "BR_MPKI": 0.004379999934300001,
+    "L1D_MPKI": 68.96096896558547,
+    "L2_MPKI": 10.324879845126802,
+    "LLC_MPKI": 8.860834867087476,
+    "DRAM_RQPI": 0.008878654866820178
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.4986237996890585,
+    "BR_MPKI": 0.0,
+    "L1D_MPKI": 39.605960394039606,
+    "L2_MPKI": 39.6029603970396,
+    "LLC_MPKI": 24.227975772024227,
+    "DRAM_RQPI": 0.02422897577102423
+  },
+  "loss": 1.0716613789474487,
+  "composite_error": 15.42,
+  "max_error": 28.357,
+  "z_scores": {
+    "IPC": 2.17,
+    "BR_MPKI": 0.0,
+    "L1D_MPKI": 4.26,
+    "L2_MPKI": 28.36,
+    "LLC_MPKI": 17.34,
+    "DRAM_RQPI": 17.29
+  },
+  "passed_gate": false,
+  "active_knobs": {
+    "branch_frequency": 0,
+    "working_set_kb": 2048,
+    "reuse": 0.0,
+    "memory_dependency": "dependent",
+    "independent_chains": 1
+  },
+  "full_knobs": {
+    "branch_frequency": 0,
+    "branch_pattern": "constant",
+    "branch_pattern_param": 50,
+    "load_branch_dependency": false,
+    "working_set_kb": 2048,
+    "stride_lines": 1,
+    "randomness": 0.5,
+    "reuse": 0.0,
+    "memory_dependency": "dependent",
+    "independent_chains": 1,
+    "alu_ops": 0,
+    "dependency_distance": 1
+  },
+  "tuning_time_sec": 169.56001710891724
+}

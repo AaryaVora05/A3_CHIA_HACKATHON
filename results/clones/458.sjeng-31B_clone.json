@@ -1,0 +1,43 @@
+{
+  "workload": "458.sjeng-31B",
+  "target_fingerprint": {
+    "IPC": 1.1235447756777408,
+    "BR_MPKI": 27.71524,
+    "L1D_MPKI": 0.670535,
+    "L2_MPKI": 0.33094,
+    "LLC_MPKI": 0.309755,
+    "DRAM_RQPI": 0.000350645
+  },
+  "cloned_fingerprint": {
+    "IPC": 2.528373348975505,
+    "BR_MPKI": 17.607964784070433,
+    "L1D_MPKI": 0.0,
+    "L2_MPKI": 0.0,
+    "LLC_MPKI": 0.0,
+    "DRAM_RQPI": 0.0
+  },
+  "loss": 0.8911380605893963,
+  "average_fidelity": 55.39560691069884,
+  "active_knobs": {
+    "branch_frequency": 8,
+    "working_set_kb": 32,
+    "reuse": 0.0,
+    "memory_dependency": "dependent",
+    "independent_chains": 2
+  },
+  "full_knobs": {
+    "branch_frequency": 8,
+    "branch_pattern": "random",
+    "branch_pattern_param": 50,
+    "load_branch_dependency": false,
+    "working_set_kb": 32,
+    "stride_lines": 1,
+    "randomness": 0.0,
+    "reuse": 0.0,
+    "memory_dependency": "dependent",
+    "independent_chains": 2,
+    "alu_ops": 0,
+    "dependency_distance": 1
+  },
+  "tuning_time_sec": 9.182804346084595
+}

@@ -1,0 +1,170 @@
+{
+  "workload": "482.sphinx3-417B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 18.5,
+  "quality_tier": "COARSE",
+  "clone_passed_gate": false,
+  "composite_error": 12.219,
+  "max_error": 18.188,
+  "normalized_fidelity_errors": {
+    "IPC": 1.82,
+    "BR_MPKI": 0.08,
+    "L1D_MPKI": 2.66,
+    "L2_MPKI": 16.76,
+    "LLC_MPKI": 18.19,
+    "DRAM_RQPI": 16.55
+  },
+  "master_fingerprint": {
+    "IPC": 0.4669375734184916,
+    "BR_MPKI": 5.381155,
+    "L1D_MPKI": 47.92116,
+    "L2_MPKI": 13.14289,
+    "LLC_MPKI": 12.47497,
+    "DRAM_RQPI": 0.013296565
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.3758839842760369,
+    "BR_MPKI": 5.461994538005462,
+    "L1D_MPKI": 35.164964835035164,
+    "L2_MPKI": 35.164964835035164,
+    "LLC_MPKI": 35.164964835035164,
+    "DRAM_RQPI": 0.0353009646990353
+  },
+  "turns_executed": 2,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "working_set_kb": 1024
+        },
+        "hypothesis_tested": "cache",
+        "expected_outcome": "If the workload is cache capacity bound, shrinking the working set to 1MB (well within the 2MB LLC) should cause a large IPC increase, and both LLC_MPKI and DRAM_RQPI should collapse to near-zero values."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 2.2482182923484366,
+          "BR_MPKI": 5.551983344049968,
+          "L1D_MPKI": 35.167894496316514,
+          "L2_MPKI": 35.16589450231649,
+          "LLC_MPKI": 0.0,
+          "DRAM_RQPI": 0.0
+        },
+        "secondary": {
+          "instructions": 1000003,
+          "cycles": 444798,
+          "branch_mispredicts": 5552,
+          "L1D_load_hit": 8791,
+          "L1D_load_miss": 35168,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 2,
+          "L2_load_miss": 35166,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 35166,
+          "LLC_load_miss": 0,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 0.0,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 0,
+          "DRAM_read_requests": 0,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 0,
+          "DRAM_dbus_congestion": 0.0,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 2,
+          "branch_pattern": "random",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 1024,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.2,
+          "memory_dependency": "dependent",
+          "independent_chains": 2,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    },
+    {
+      "turn": 2,
+      "probe": {
+        "knob_overrides": {
+          "memory_dependency": "independent",
+          "independent_chains": 4
+        },
+        "hypothesis_tested": "dram_lat",
+        "expected_outcome": "If the bottleneck is serialized memory latency (pointer chasing), breaking the dependency chains and introducing MLP should result in a significant IPC uplift, even while LLC_MPKI and DRAM_RQPI remain high. Given the prior result, a small to moderate IPC gain is expected, which would confirm that cache capacity is the more dominant bottleneck."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.3648879958052476,
+          "BR_MPKI": 6.06,
+          "L1D_MPKI": 38.988,
+          "L2_MPKI": 37.876,
+          "LLC_MPKI": 34.2,
+          "DRAM_RQPI": 0.03436
+        },
+        "secondary": {
+          "instructions": 1000000,
+          "cycles": 2740567,
+          "branch_mispredicts": 6060,
+          "L1D_load_hit": 9794,
+          "L1D_load_miss": 38988,
+          "L1D_load_miss_merge": 13,
+          "L2_load_hit": 1099,
+          "L2_load_miss": 37876,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 3676,
+          "LLC_load_miss": 34200,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 205.22546565774155,
+          "DRAM_read_row_hit": 5,
+          "DRAM_read_row_miss": 34355,
+          "DRAM_read_requests": 34360,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 34360,
+          "DRAM_dbus_congestion": 2.7080690708763484,
+          "DRAM_row_hit_rate": 0.00014551804423748544
+        },
+        "knobs": {
+          "branch_frequency": 2,
+          "branch_pattern": "random",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 16384,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.2,
+          "memory_dependency": "independent",
+          "independent_chains": 4,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "cache",
+    "confidence": 0.98,
+    "justification": "The diagnosis is based on the extremely strong differential response between two probes. The cache-shrinking probe ('working_set_kb': 1024) yielded a +498.1% IPC gain by eliminating LLC misses, while the latency-hiding probe ('memory_dependency': 'independent') yielded no gain. This decisively proves the workload is limited by its working set size exceeding the LLC capacity."
+  },
+  "oracle_ground_truth": "CACHE",
+  "oracle_speedup_pct": 249.8,
+  "correct": true,
+  "loop_time_sec": 97.1561267375946
+}

@@ -1,0 +1,109 @@
+{
+  "workload": "458.sjeng-1088B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 63.3,
+  "quality_tier": "MODERATE",
+  "clone_passed_gate": true,
+  "composite_error": 5.509,
+  "max_error": 12.808,
+  "normalized_fidelity_errors": {
+    "IPC": 12.81,
+    "BR_MPKI": 4.08,
+    "L1D_MPKI": 0.59,
+    "L2_MPKI": 0.33,
+    "LLC_MPKI": 0.63,
+    "DRAM_RQPI": 0.71
+  },
+  "master_fingerprint": {
+    "IPC": 1.1049016558802023,
+    "BR_MPKI": 30.012095,
+    "L1D_MPKI": 0.588525,
+    "L2_MPKI": 0.33199,
+    "LLC_MPKI": 0.31326,
+    "DRAM_RQPI": 0.000353145
+  },
+  "cloned_fingerprint": {
+    "IPC": 2.520036792500378,
+    "BR_MPKI": 17.75298224701775,
+    "L1D_MPKI": 0.0,
+    "L2_MPKI": 0.0,
+    "LLC_MPKI": 0.0,
+    "DRAM_RQPI": 0.0
+  },
+  "turns_executed": 1,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "branch_pattern": "constant"
+        },
+        "hypothesis_tested": "branch",
+        "expected_outcome": "A large IPC increase should occur as setting the branch pattern to constant will eliminate branch mispredictions (BR_MPKI -> 0), removing the primary source of pipeline flushes."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 3.9999560005279937,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 0.0,
+          "L2_MPKI": 0.0,
+          "LLC_MPKI": 0.0,
+          "DRAM_RQPI": 0.0
+        },
+        "secondary": {
+          "instructions": 1000001,
+          "cycles": 250003,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 35714,
+          "L1D_load_miss": 0,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 0,
+          "L2_load_miss": 0,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 0,
+          "LLC_load_miss": 0,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 0.0,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 0,
+          "DRAM_read_requests": 0,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 0,
+          "DRAM_dbus_congestion": 0.0,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 8,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 32,
+          "stride_lines": 1,
+          "randomness": 0.0,
+          "reuse": 0.0,
+          "memory_dependency": "dependent",
+          "independent_chains": 2,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "branch",
+    "confidence": 0.97,
+    "justification": "The master workload's profile is dominated by a very high branch misprediction rate (BR_MPKI: 30.01) with almost no memory traffic. A single diagnostic probe that eliminated branch mispredictions ('branch_pattern': 'constant') yielded a +58.7% IPC speedup. This large performance gain directly confirms that branch prediction is the primary bottleneck."
+  },
+  "oracle_ground_truth": "branch",
+  "oracle_speedup_pct": 52.94117647058824,
+  "correct": true,
+  "loop_time_sec": 38.00680375099182
+}

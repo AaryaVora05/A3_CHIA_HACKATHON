@@ -1,0 +1,170 @@
+{
+  "workload": "437.leslie3d-232B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 0.0,
+  "quality_tier": "COARSE",
+  "clone_passed_gate": false,
+  "composite_error": 15.259,
+  "max_error": 28.442,
+  "normalized_fidelity_errors": {
+    "IPC": 4.47,
+    "BR_MPKI": 0.2,
+    "L1D_MPKI": 4.23,
+    "L2_MPKI": 13.14,
+    "LLC_MPKI": 28.44,
+    "DRAM_RQPI": 19.43
+  },
+  "master_fingerprint": {
+    "IPC": 0.747600475372224,
+    "BR_MPKI": 0.19586499804135002,
+    "L1D_MPKI": 13.5480798645192,
+    "L2_MPKI": 6.1359449386405505,
+    "LLC_MPKI": 5.01372494986275,
+    "DRAM_RQPI": 0.0065761649342383505
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.41328183311250394,
+    "BR_MPKI": 0.0,
+    "L1D_MPKI": 19.27392290430838,
+    "L2_MPKI": 19.27392290430838,
+    "LLC_MPKI": 19.27392290430838,
+    "DRAM_RQPI": 0.019353922584309662
+  },
+  "turns_executed": 2,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "memory_dependency": "independent",
+          "independent_chains": 4
+        },
+        "hypothesis_tested": "dram_lat",
+        "expected_outcome": "A large IPC increase while LLC_MPKI and DRAM_RQPI remain high. This would demonstrate that performance is limited by serialized memory dependencies rather than by the working set size spilling from the LLC."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.5931750667913122,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 21.593935218194346,
+          "L2_MPKI": 20.94793715618853,
+          "LLC_MPKI": 18.88994333017001,
+          "DRAM_RQPI": 0.018976943069170794
+        },
+        "secondary": {
+          "instructions": 1000003,
+          "cycles": 1685848,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 32462,
+          "L1D_load_miss": 21594,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 646,
+          "L2_load_miss": 20948,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 2058,
+          "LLC_load_miss": 18890,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 205.99989460926383,
+          "DRAM_read_row_hit": 2,
+          "DRAM_read_row_miss": 18975,
+          "DRAM_read_requests": 18977,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 18977,
+          "DRAM_dbus_congestion": 2.7439981532779316,
+          "DRAM_row_hit_rate": 0.00010539073615429204
+        },
+        "knobs": {
+          "branch_frequency": 0,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 16384,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.6,
+          "memory_dependency": "independent",
+          "independent_chains": 4,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    },
+    {
+      "turn": 2,
+      "probe": {
+        "knob_overrides": {
+          "working_set_kb": 1024
+        },
+        "hypothesis_tested": "cache",
+        "expected_outcome": "A large IPC increase accompanied by a collapse in LLC_MPKI and DRAM_RQPI. This will test if resolving the cache capacity issue by fitting the working set into the LLC provides a larger speedup than the +43.5% gained from resolving the dependency issue in the previous probe."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 2.3770383083110684,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 19.273980726019275,
+          "L2_MPKI": 19.273980726019275,
+          "LLC_MPKI": 0.0,
+          "DRAM_RQPI": 0.0
+        },
+        "secondary": {
+          "instructions": 1000001,
+          "cycles": 420692,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 28921,
+          "L1D_load_miss": 19274,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 0,
+          "L2_load_miss": 19274,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 19274,
+          "LLC_load_miss": 0,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 0.0,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 0,
+          "DRAM_read_requests": 0,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 0,
+          "DRAM_dbus_congestion": 0.0,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 0,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 1024,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.6,
+          "memory_dependency": "dependent",
+          "independent_chains": 2,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "cache",
+    "confidence": 0.95,
+    "justification": "The workload is overwhelmingly limited by LLC capacity. A probe reducing the working set size to fit in the LLC (`working_set_kb: 1024`) resulted in a +475.2% IPC speedup and eliminated all LLC misses. In contrast, a probe targeting serialized DRAM latency (`memory_dependency: 'independent'`) only yielded a +43.5% IPC speedup. The much larger performance gain from the cache-focused intervention provides definitive evidence that LLC capacity is the primary bottleneck."
+  },
+  "oracle_ground_truth": "CACHE",
+  "oracle_speedup_pct": 41.8,
+  "correct": true,
+  "loop_time_sec": 111.28771710395813
+}

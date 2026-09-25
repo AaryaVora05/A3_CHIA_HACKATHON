@@ -1,0 +1,170 @@
+{
+  "workload": "619.lbm_s-4268B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 0.0,
+  "quality_tier": "COARSE",
+  "clone_passed_gate": false,
+  "composite_error": 17.522,
+  "max_error": 30.159,
+  "normalized_fidelity_errors": {
+    "IPC": 2.26,
+    "BR_MPKI": 0.9,
+    "L1D_MPKI": 4.14,
+    "L2_MPKI": 30.16,
+    "LLC_MPKI": 30.16,
+    "DRAM_RQPI": 0.02
+  },
+  "master_fingerprint": {
+    "IPC": 0.4407012555569894,
+    "BR_MPKI": 0.90440999547795,
+    "L1D_MPKI": 82.19706458901467,
+    "L2_MPKI": 12.001344939993276,
+    "LLC_MPKI": 12.001054939994726,
+    "DRAM_RQPI": 0.04809588475952058
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.3277271239093651,
+    "BR_MPKI": 0.0,
+    "L1D_MPKI": 48.195,
+    "L2_MPKI": 48.195,
+    "LLC_MPKI": 48.195,
+    "DRAM_RQPI": 0.048194
+  },
+  "turns_executed": 2,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "memory_dependency": "independent",
+          "independent_chains": 4
+        },
+        "hypothesis_tested": "dram_lat",
+        "expected_outcome": "A significant IPC increase while LLC_MPKI and DRAM_RQPI remain high. This would indicate the workload is limited by serialized memory accesses, and breaking the dependencies allows for memory-level parallelism to hide latency."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.4325300673276303,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 53.425,
+          "L2_MPKI": 47.3,
+          "LLC_MPKI": 27.115,
+          "DRAM_RQPI": 0.027113
+        },
+        "secondary": {
+          "instructions": 1000000,
+          "cycles": 2311978,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 634,
+          "L1D_load_miss": 53425,
+          "L1D_load_miss_merge": 3,
+          "L2_load_hit": 6122,
+          "L2_load_miss": 47300,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 20185,
+          "LLC_load_miss": 27115,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 203.20879283000775,
+          "DRAM_read_row_hit": 17,
+          "DRAM_read_row_miss": 27096,
+          "DRAM_read_requests": 27113,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 27113,
+          "DRAM_dbus_congestion": 2.6653462816253515,
+          "DRAM_row_hit_rate": 0.0006270054955187549
+        },
+        "knobs": {
+          "branch_frequency": 0,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 4096,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.0,
+          "memory_dependency": "independent",
+          "independent_chains": 4,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    },
+    {
+      "turn": 2,
+      "probe": {
+        "knob_overrides": {
+          "working_set_kb": 1024
+        },
+        "hypothesis_tested": "cache",
+        "expected_outcome": "If the workload is primarily limited by LLC capacity, reducing the working set to 1024KB should cause a massive IPC increase (likely >100%) and a near-total collapse of LLC_MPKI and DRAM_RQPI. If the IPC gain is smaller than the +32% observed from the 'dram_lat' probe, it will strongly refute the 'cache' hypothesis."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 2.120332636453461,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 48.19480722077112,
+          "L2_MPKI": 48.19180723277107,
+          "LLC_MPKI": 0.0,
+          "DRAM_RQPI": 0.0
+        },
+        "secondary": {
+          "instructions": 1000004,
+          "cycles": 471626,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 0,
+          "L1D_load_miss": 48195,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 2,
+          "L2_load_miss": 48192,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 48192,
+          "LLC_load_miss": 0,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 0.0,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 0,
+          "DRAM_read_requests": 0,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 0,
+          "DRAM_dbus_congestion": 0.0,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 0,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 1024,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.0,
+          "memory_dependency": "dependent",
+          "independent_chains": 2,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "dram_lat",
+    "confidence": 0.9,
+    "justification": "The diagnosis is 'dram_lat' based on the strong positive response to the memory dependency probe. Probe #1, which parallelized memory accesses, yielded a +32% IPC improvement while maintaining high memory traffic. This is a classic signature of a workload limited by serialized pointer-chasing from DRAM. In contrast, while shrinking the working set in Probe #2 gave a much larger +547% IPC gain, this is considered an artificial result of eliminating all memory misses. The +32% gain from addressing the dependency chain is a more realistic and causally significant signal, confirming that serialized memory latency is the primary performance limiter."
+  },
+  "oracle_ground_truth": "dram_bw",
+  "oracle_speedup_pct": 90.60585432266849,
+  "correct": false,
+  "loop_time_sec": 93.45746088027954
+}

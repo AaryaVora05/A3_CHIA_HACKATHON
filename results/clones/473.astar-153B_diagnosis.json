@@ -1,0 +1,109 @@
+{
+  "workload": "473.astar-153B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 79.7,
+  "quality_tier": "HIGH",
+  "clone_passed_gate": true,
+  "composite_error": 3.048,
+  "max_error": 4.144,
+  "normalized_fidelity_errors": {
+    "IPC": 1.54,
+    "BR_MPKI": 3.71,
+    "L1D_MPKI": 2.22,
+    "L2_MPKI": 4.14,
+    "LLC_MPKI": 3.34,
+    "DRAM_RQPI": 2.52
+  },
+  "master_fingerprint": {
+    "IPC": 1.1322769770478627,
+    "BR_MPKI": 28.32866471671335,
+    "L1D_MPKI": 4.755269952447301,
+    "L2_MPKI": 1.1060549889394502,
+    "LLC_MPKI": 0.69414499305855,
+    "DRAM_RQPI": 0.0011030699889693
+  },
+  "cloned_fingerprint": {
+    "IPC": 1.3066029045724477,
+    "BR_MPKI": 17.808964382071235,
+    "L1D_MPKI": 6.9749860500278995,
+    "L2_MPKI": 5.249989500021,
+    "LLC_MPKI": 2.362995274009452,
+    "DRAM_RQPI": 0.002362995274009452
+  },
+  "turns_executed": 1,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "branch_pattern": "constant"
+        },
+        "hypothesis_tested": "branch",
+        "expected_outcome": "A very large IPC increase should be observed as the branch misprediction penalty is eliminated. BR_MPKI is expected to drop to near zero. Memory metrics like LLC_MPKI and DRAM_RQPI should remain low and largely unaffected."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 1.4953494770778566,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 6.974979075062775,
+          "L2_MPKI": 5.24998425004725,
+          "LLC_MPKI": 2.362992911021267,
+          "DRAM_RQPI": 0.002362992911021267
+        },
+        "secondary": {
+          "instructions": 1000003,
+          "cycles": 668742,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 28741,
+          "L1D_load_miss": 6975,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 1725,
+          "L2_load_miss": 5250,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 2887,
+          "LLC_load_miss": 2363,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 177.6550994498519,
+          "DRAM_read_row_hit": 4,
+          "DRAM_read_row_miss": 2359,
+          "DRAM_read_requests": 2363,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 2363,
+          "DRAM_dbus_congestion": 2.7397590361445783,
+          "DRAM_row_hit_rate": 0.0016927634363097758
+        },
+        "knobs": {
+          "branch_frequency": 8,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 2048,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.8,
+          "memory_dependency": "independent",
+          "independent_chains": 2,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "branch",
+    "confidence": 0.95,
+    "justification": "The master workload exhibits a classic branch-bound profile with a very high branch misprediction rate (BR_MPKI=28.3) and minimal memory traffic (LLC_MPKI=0.69, DRAM_RQPI=0.001). A targeted probe that eliminated branch mispredictions ('branch_pattern': 'constant') produced a significant +14.4% IPC speedup. The lack of memory pressure makes cache or DRAM bottlenecks physically implausible, confirming that branch misprediction is the primary performance limiter."
+  },
+  "oracle_ground_truth": "branch",
+  "oracle_speedup_pct": 55.03533568904594,
+  "correct": true,
+  "loop_time_sec": 54.45763611793518
+}

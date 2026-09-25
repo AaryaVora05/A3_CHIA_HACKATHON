@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C / C++ build artifacts
+*.o
+*.d
+*.so
+*.a
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Temporary and log files
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# Ray temp directories
+/tmp/ray/

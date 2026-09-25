@@ -1,0 +1,170 @@
+{
+  "workload": "429.mcf-184B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 58.8,
+  "quality_tier": "MODERATE",
+  "clone_passed_gate": true,
+  "composite_error": 6.182,
+  "max_error": 8.437,
+  "normalized_fidelity_errors": {
+    "IPC": 5.41,
+    "BR_MPKI": 5.14,
+    "L1D_MPKI": 8.44,
+    "L2_MPKI": 6.39,
+    "LLC_MPKI": 5.43,
+    "DRAM_RQPI": 5.67
+  },
+  "master_fingerprint": {
+    "IPC": 0.10109638892251523,
+    "BR_MPKI": 31.952705,
+    "L1D_MPKI": 196.802665,
+    "L2_MPKI": 85.26614,
+    "LLC_MPKI": 67.26381,
+    "DRAM_RQPI": 0.071976085
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.37144716495659097,
+    "BR_MPKI": 15.522953431139706,
+    "L1D_MPKI": 30.76990769027693,
+    "L2_MPKI": 30.76990769027693,
+    "LLC_MPKI": 30.76890769327692,
+    "DRAM_RQPI": 0.03114790655628033
+  },
+  "turns_executed": 2,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "memory_dependency": "independent",
+          "independent_chains": 4
+        },
+        "hypothesis_tested": "dram_lat",
+        "expected_outcome": "If the bottleneck is serialized DRAM latency, breaking the dependency chains should enable memory-level parallelism, leading to a large IPC increase. Memory traffic metrics like LLC_MPKI and DRAM_RQPI should remain high, as the working set size is unchanged."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.3420792741351466,
+          "BR_MPKI": 19.523,
+          "L1D_MPKI": 38.779,
+          "L2_MPKI": 38.27,
+          "LLC_MPKI": 36.584,
+          "DRAM_RQPI": 0.036987
+        },
+        "secondary": {
+          "instructions": 1000000,
+          "cycles": 2923299,
+          "branch_mispredicts": 19523,
+          "L1D_load_hit": 54,
+          "L1D_load_miss": 38779,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 509,
+          "L2_load_miss": 38270,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 1686,
+          "LLC_load_miss": 36584,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 206.33690215481116,
+          "DRAM_read_row_hit": 3,
+          "DRAM_read_row_miss": 36984,
+          "DRAM_read_requests": 36987,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 36987,
+          "DRAM_dbus_congestion": 2.6573734113375025,
+          "DRAM_row_hit_rate": 8.110957904128478e-05
+        },
+        "knobs": {
+          "branch_frequency": 8,
+          "branch_pattern": "random",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 32768,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.0,
+          "memory_dependency": "independent",
+          "independent_chains": 4,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    },
+    {
+      "turn": 2,
+      "probe": {
+        "knob_overrides": {
+          "working_set_kb": 1024
+        },
+        "hypothesis_tested": "cache",
+        "expected_outcome": "If the bottleneck is LLC capacity, shrinking the working set to fit within the 2MB LLC should cause a massive IPC increase, accompanied by a collapse in LLC_MPKI and DRAM_RQPI as cache thrashing is eliminated."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 2.1536750200291177,
+          "BR_MPKI": 15.320954037137888,
+          "L1D_MPKI": 30.76990769027693,
+          "L2_MPKI": 30.76990769027693,
+          "LLC_MPKI": 0.0,
+          "DRAM_RQPI": 0.0
+        },
+        "secondary": {
+          "instructions": 1000003,
+          "cycles": 464324,
+          "branch_mispredicts": 15321,
+          "L1D_load_hit": 0,
+          "L1D_load_miss": 30770,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 0,
+          "L2_load_miss": 30770,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 30768,
+          "LLC_load_miss": 0,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 0.0,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 0,
+          "DRAM_read_requests": 0,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 0,
+          "DRAM_dbus_congestion": 0.0,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 8,
+          "branch_pattern": "random",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 1024,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.0,
+          "memory_dependency": "dependent",
+          "independent_chains": 1,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "cache",
+    "confidence": 0.95,
+    "justification": "The workload is definitively limited by LLC capacity. Reducing the working set size to fit into the LLC ('working_set_kb': 1024) resulted in a nearly 5x IPC speedup (+479.8%) and eliminated all DRAM traffic. A probe to test for a DRAM latency bottleneck by parallelizing memory access showed no benefit, confirming the issue is cache capacity misses, not serialized dependencies."
+  },
+  "oracle_ground_truth": "CACHE",
+  "oracle_speedup_pct": 91.4,
+  "correct": true,
+  "loop_time_sec": 121.12607288360596
+}

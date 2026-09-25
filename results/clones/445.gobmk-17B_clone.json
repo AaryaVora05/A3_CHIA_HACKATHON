@@ -1,0 +1,43 @@
+{
+  "workload": "445.gobmk-17B",
+  "target_fingerprint": {
+    "IPC": 1.2457784012289503,
+    "BR_MPKI": 24.40053951198921,
+    "L1D_MPKI": 0.4320799913584002,
+    "L2_MPKI": 0.009509999809800003,
+    "LLC_MPKI": 0.009044999819100003,
+    "DRAM_RQPI": 1.0084999798300004e-05
+  },
+  "cloned_fingerprint": {
+    "IPC": 2.5354685273550603,
+    "BR_MPKI": 17.60992956028176,
+    "L1D_MPKI": 0.0,
+    "L2_MPKI": 0.0,
+    "LLC_MPKI": 0.0,
+    "DRAM_RQPI": 0.0
+  },
+  "loss": 0.7444092627451504,
+  "average_fidelity": 71.18428984908675,
+  "active_knobs": {
+    "branch_frequency": 8,
+    "working_set_kb": 32,
+    "reuse": 0.0,
+    "memory_dependency": "independent",
+    "independent_chains": 2
+  },
+  "full_knobs": {
+    "branch_frequency": 8,
+    "branch_pattern": "random",
+    "branch_pattern_param": 50,
+    "load_branch_dependency": false,
+    "working_set_kb": 32,
+    "stride_lines": 1,
+    "randomness": 0.0,
+    "reuse": 0.0,
+    "memory_dependency": "independent",
+    "independent_chains": 2,
+    "alu_ops": 0,
+    "dependency_distance": 1
+  },
+  "tuning_time_sec": 9.495476961135864
+}

@@ -1,0 +1,109 @@
+{
+  "workload": "410.bwaves-945B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 95.5,
+  "quality_tier": "HIGH",
+  "clone_passed_gate": true,
+  "composite_error": 0.669,
+  "max_error": 1.236,
+  "normalized_fidelity_errors": {
+    "IPC": 1.07,
+    "BR_MPKI": 1.24,
+    "L1D_MPKI": 0.01,
+    "L2_MPKI": 0.0,
+    "LLC_MPKI": 0.01,
+    "DRAM_RQPI": 0.06
+  },
+  "master_fingerprint": {
+    "IPC": 2.992661157007975,
+    "BR_MPKI": 7.330079890048801,
+    "L1D_MPKI": 0.009009999864850002,
+    "L2_MPKI": 0.002809999957850001,
+    "LLC_MPKI": 0.002809999957850001,
+    "DRAM_RQPI": 3.071499953927501e-05
+  },
+  "cloned_fingerprint": {
+    "IPC": 3.313650250843324,
+    "BR_MPKI": 6.094,
+    "L1D_MPKI": 0.0,
+    "L2_MPKI": 0.0,
+    "LLC_MPKI": 0.0,
+    "DRAM_RQPI": 0.0
+  },
+  "turns_executed": 1,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "branch_pattern": "constant"
+        },
+        "hypothesis_tested": "branch",
+        "expected_outcome": "A large IPC increase and a drop in BR_MPKI to near zero. If the branch misprediction penalty is the primary bottleneck, making the branches perfectly predictable by setting the pattern to 'constant' should resolve the stalls and significantly improve performance."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 3.999968000255998,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 0.0,
+          "L2_MPKI": 0.0,
+          "LLC_MPKI": 0.0,
+          "DRAM_RQPI": 0.0
+        },
+        "secondary": {
+          "instructions": 1000000,
+          "cycles": 250002,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 48780,
+          "L1D_load_miss": 0,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 0,
+          "L2_load_miss": 0,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 0,
+          "LLC_load_miss": 0,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 0.0,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 0,
+          "DRAM_read_requests": 0,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 0,
+          "DRAM_dbus_congestion": 0.0,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 2,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 32,
+          "stride_lines": 1,
+          "randomness": 0.0,
+          "reuse": 0.0,
+          "memory_dependency": "independent",
+          "independent_chains": 4,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "branch",
+    "confidence": 0.95,
+    "justification": "The master workload exhibits a high branch misprediction rate (7.33 MPKI) with virtually no memory pressure (LLC MPKI < 0.01). A diagnostic probe that eliminated branch mispredictions ('branch_pattern': 'constant') resulted in a large IPC speedup of +20.7%, confirming that branch prediction is the primary performance bottleneck."
+  },
+  "oracle_ground_truth": "branch",
+  "oracle_speedup_pct": 9.288339458737054,
+  "correct": true,
+  "loop_time_sec": 36.89290475845337
+}

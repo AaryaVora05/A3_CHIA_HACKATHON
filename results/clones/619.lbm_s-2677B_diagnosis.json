@@ -1,0 +1,170 @@
+{
+  "workload": "619.lbm_s-2677B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 0.0,
+  "quality_tier": "COARSE",
+  "clone_passed_gate": false,
+  "composite_error": 17.565,
+  "max_error": 30.23,
+  "normalized_fidelity_errors": {
+    "IPC": 2.4,
+    "BR_MPKI": 0.9,
+    "L1D_MPKI": 4.12,
+    "L2_MPKI": 30.23,
+    "LLC_MPKI": 30.23,
+    "DRAM_RQPI": 0.06
+  },
+  "master_fingerprint": {
+    "IPC": 0.441259498364379,
+    "BR_MPKI": 0.9011599954942,
+    "L1D_MPKI": 82.0172195899139,
+    "L2_MPKI": 11.98002994009985,
+    "LLC_MPKI": 11.9798399401008,
+    "DRAM_RQPI": 0.0480113397599433
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.3210672113662589,
+    "BR_MPKI": 0.0,
+    "L1D_MPKI": 48.19485541543376,
+    "L2_MPKI": 48.19485541543376,
+    "LLC_MPKI": 48.19485541543376,
+    "DRAM_RQPI": 0.04830985507043479
+  },
+  "turns_executed": 2,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "reuse": 0.8
+        },
+        "hypothesis_tested": "cache",
+        "expected_outcome": "If 'cache' is the primary bottleneck, IPC will increase significantly as the boosted reuse fits the working set into the cache, drastically reducing LLC_MPKI and DRAM_RQPI. If the bottleneck is 'dram_lat' or 'dram_bw', IPC will see little to no improvement because the access pattern is inherently non-temporal."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.7329261195812939,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 9.636,
+          "L2_MPKI": 9.636,
+          "LLC_MPKI": 9.636,
+          "DRAM_RQPI": 0.009662
+        },
+        "secondary": {
+          "instructions": 1000000,
+          "cycles": 1364394,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 38558,
+          "L1D_load_miss": 9636,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 0,
+          "L2_load_miss": 9636,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 0,
+          "LLC_load_miss": 9636,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 192.68629683295384,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 9662,
+          "DRAM_read_requests": 9662,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 9662,
+          "DRAM_dbus_congestion": 2.7026450511945392,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 0,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 8192,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.8,
+          "memory_dependency": "dependent",
+          "independent_chains": 2,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    },
+    {
+      "turn": 2,
+      "probe": {
+        "knob_overrides": {
+          "memory_dependency": "independent",
+          "independent_chains": 4
+        },
+        "hypothesis_tested": "dram_lat",
+        "expected_outcome": "A modest IPC increase, significantly smaller than the +128% gain from the 'cache' probe. The workload will still suffer from high LLC_MPKI because the fundamental cache capacity issue is not addressed. This will confirm that cache capacity is the primary bottleneck, not serialized memory accesses."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.37046504477070064,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 53.736,
+          "L2_MPKI": 50.706,
+          "LLC_MPKI": 40.564,
+          "DRAM_RQPI": 0.040678
+        },
+        "secondary": {
+          "instructions": 1000000,
+          "cycles": 2699310,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 322,
+          "L1D_load_miss": 53736,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 3030,
+          "L2_load_miss": 50706,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 10142,
+          "LLC_load_miss": 40564,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 208.8673484438763,
+          "DRAM_read_row_hit": 8,
+          "DRAM_read_row_miss": 40670,
+          "DRAM_read_requests": 40678,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 40678,
+          "DRAM_dbus_congestion": 2.688125,
+          "DRAM_row_hit_rate": 0.00019666650277791434
+        },
+        "knobs": {
+          "branch_frequency": 0,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 8192,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.0,
+          "memory_dependency": "independent",
+          "independent_chains": 4,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "cache",
+    "confidence": 0.89,
+    "justification": "The diagnosis is based on the overwhelming IPC improvement (+128.3%) observed when probing for a cache capacity bottleneck ('reuse': 0.8). This far exceeded the minor gain (+15.4%) from a probe targeting DRAM latency. The result strongly indicates the workload's working set does not fit in the LLC, and the resulting cache misses are the primary performance limiter."
+  },
+  "oracle_ground_truth": "DRAM_BW",
+  "oracle_speedup_pct": 90.5,
+  "correct": false,
+  "loop_time_sec": 133.75921058654785
+}

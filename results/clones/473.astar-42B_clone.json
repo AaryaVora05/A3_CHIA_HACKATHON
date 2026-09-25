@@ -1,0 +1,43 @@
+{
+  "workload": "473.astar-42B",
+  "target_fingerprint": {
+    "IPC": 0.5061124670370215,
+    "BR_MPKI": 52.41244,
+    "L1D_MPKI": 40.69201,
+    "L2_MPKI": 11.64789,
+    "LLC_MPKI": 2.363345,
+    "DRAM_RQPI": 0.00238147
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.5213964609835375,
+    "BR_MPKI": 17.667929328282685,
+    "L1D_MPKI": 28.56988572045712,
+    "L2_MPKI": 28.56988572045712,
+    "LLC_MPKI": 17.777928888284446,
+    "DRAM_RQPI": 0.017777928888284448
+  },
+  "loss": 1.1715886317794797,
+  "average_fidelity": 50.14190616544325,
+  "active_knobs": {
+    "branch_frequency": 8,
+    "working_set_kb": 2048,
+    "reuse": 0.2,
+    "memory_dependency": "dependent",
+    "independent_chains": 2
+  },
+  "full_knobs": {
+    "branch_frequency": 8,
+    "branch_pattern": "random",
+    "branch_pattern_param": 50,
+    "load_branch_dependency": false,
+    "working_set_kb": 2048,
+    "stride_lines": 1,
+    "randomness": 0.5,
+    "reuse": 0.2,
+    "memory_dependency": "dependent",
+    "independent_chains": 2,
+    "alu_ops": 0,
+    "dependency_distance": 1
+  },
+  "tuning_time_sec": 33.28991651535034
+}

@@ -1,0 +1,57 @@
+{
+  "workload": "483.xalancbmk-716B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "target_fingerprint": {
+    "IPC": 1.409337534831601,
+    "BR_MPKI": 10.39556,
+    "L1D_MPKI": 19.478425,
+    "L2_MPKI": 1.21905,
+    "LLC_MPKI": 0.60027,
+    "DRAM_RQPI": 0.00220785
+  },
+  "cloned_fingerprint": {
+    "IPC": 1.6002285121745141,
+    "BR_MPKI": 10.280979438041124,
+    "L1D_MPKI": 22.213955572088857,
+    "L2_MPKI": 4.293991412017176,
+    "LLC_MPKI": 1.731996536006928,
+    "DRAM_RQPI": 0.001731996536006928
+  },
+  "loss": 0.03711832932518128,
+  "composite_error": 1.794,
+  "max_error": 3.075,
+  "z_scores": {
+    "IPC": 1.35,
+    "BR_MPKI": 0.11,
+    "L1D_MPKI": 1.4,
+    "L2_MPKI": 3.07,
+    "LLC_MPKI": 2.26,
+    "DRAM_RQPI": 0.95
+  },
+  "passed_gate": false,
+  "active_knobs": {
+    "branch_frequency": 4,
+    "working_set_kb": 512,
+    "reuse": 0.4,
+    "memory_dependency": "independent",
+    "independent_chains": 2
+  },
+  "full_knobs": {
+    "branch_frequency": 4,
+    "branch_pattern": "random",
+    "branch_pattern_param": 50,
+    "load_branch_dependency": false,
+    "working_set_kb": 512,
+    "stride_lines": 1,
+    "randomness": 0.5,
+    "reuse": 0.4,
+    "memory_dependency": "independent",
+    "independent_chains": 2,
+    "alu_ops": 0,
+    "dependency_distance": 1
+  },
+  "tuning_time_sec": 107.91951084136963
+}

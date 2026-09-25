@@ -1,0 +1,109 @@
+{
+  "workload": "619.lbm_s-3766B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 0.0,
+  "quality_tier": "COARSE",
+  "clone_passed_gate": false,
+  "composite_error": 20.299,
+  "max_error": 36.941,
+  "normalized_fidelity_errors": {
+    "IPC": 3.7,
+    "BR_MPKI": 0.63,
+    "L1D_MPKI": 2.75,
+    "L2_MPKI": 36.94,
+    "LLC_MPKI": 32.94,
+    "DRAM_RQPI": 0.76
+  },
+  "master_fingerprint": {
+    "IPC": 0.5190099298069691,
+    "BR_MPKI": 0.632345,
+    "L1D_MPKI": 66.34327,
+    "L2_MPKI": 9.7956,
+    "LLC_MPKI": 9.79526,
+    "DRAM_RQPI": 0.03925618
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.3272013616811868,
+    "BR_MPKI": 0.0,
+    "L1D_MPKI": 48.081,
+    "L2_MPKI": 46.737,
+    "LLC_MPKI": 42.065,
+    "DRAM_RQPI": 0.042255
+  },
+  "turns_executed": 1,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "reuse": 0.8
+        },
+        "hypothesis_tested": "cache",
+        "expected_outcome": "The master workload has a high LLC_MPKI (9.79). If this is a cache capacity issue, introducing high temporal reuse (`reuse: 0.8`) should significantly reduce the LLC_MPKI by fitting the hot working set into the cache, thereby reducing DRAM traffic and substantially increasing IPC. If IPC does not improve much, it suggests the misses are compulsory/streaming, pointing towards a DRAM bottleneck."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.749077888807323,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 9.616961532153871,
+          "L2_MPKI": 9.345962616149535,
+          "LLC_MPKI": 8.365966536133856,
+          "DRAM_RQPI": 0.008411966352134592
+        },
+        "secondary": {
+          "instructions": 1000004,
+          "cycles": 1334980,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 38578,
+          "L1D_load_miss": 9617,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 271,
+          "L2_load_miss": 9346,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 980,
+          "LLC_load_miss": 8366,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 188.55385164051356,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 8412,
+          "DRAM_read_requests": 8412,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 8412,
+          "DRAM_dbus_congestion": 2.6878154289834173,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 0,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 16384,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.8,
+          "memory_dependency": "independent",
+          "independent_chains": 2,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "cache",
+    "confidence": 0.9,
+    "justification": "The master workload has a high LLC miss rate (LLC_MPKI: 9.79). A diagnostic probe simulating high temporal reuse ('reuse: 0.8') resulted in a +128.9% IPC gain and a drastic reduction in DRAM traffic. This indicates the workload's performance is primarily limited by its working set exceeding the last-level cache capacity, making 'cache' the primary bottleneck."
+  },
+  "oracle_ground_truth": "DRAM_BW",
+  "oracle_speedup_pct": 79.8,
+  "correct": false,
+  "loop_time_sec": 117.48230767250061
+}

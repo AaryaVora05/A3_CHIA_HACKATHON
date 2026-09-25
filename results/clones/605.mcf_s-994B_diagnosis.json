@@ -1,0 +1,169 @@
+{
+  "workload": "605.mcf_s-994B",
+  "execution_profile": {
+    "SIM_INSTR": "1000000",
+    "WARMUP_MIN": "500000"
+  },
+  "status": "COMPLETED",
+  "figure_of_merit": 72.8,
+  "quality_tier": "MODERATE",
+  "clone_passed_gate": true,
+  "composite_error": 4.081,
+  "max_error": 7.423,
+  "normalized_fidelity_errors": {
+    "IPC": 0.18,
+    "BR_MPKI": 0.55,
+    "L1D_MPKI": 3.37,
+    "L2_MPKI": 1.23,
+    "LLC_MPKI": 7.42,
+    "DRAM_RQPI": 5.62
+  },
+  "master_fingerprint": {
+    "IPC": 0.3993471552640459,
+    "BR_MPKI": 16.2474398375256,
+    "L1D_MPKI": 37.1482596285174,
+    "L2_MPKI": 21.9134197808658,
+    "LLC_MPKI": 14.128124858718751,
+    "DRAM_RQPI": 0.0158246298417537
+  },
+  "cloned_fingerprint": {
+    "IPC": 0.40853024071731087,
+    "BR_MPKI": 15.352938588245648,
+    "L1D_MPKI": 24.61690153239387,
+    "L2_MPKI": 24.61690153239387,
+    "LLC_MPKI": 24.614901540393838,
+    "DRAM_RQPI": 0.02471990112039552
+  },
+  "turns_executed": 2,
+  "history": [
+    {
+      "turn": 1,
+      "probe": {
+        "knob_overrides": {
+          "branch_pattern": "constant"
+        },
+        "hypothesis_tested": "branch",
+        "expected_outcome": "A large IPC increase and a drop in BR_MPKI to near zero. This would confirm that branch misprediction pipeline flushes are a primary performance limiter."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 0.4103878078828853,
+          "BR_MPKI": 0.0,
+          "L1D_MPKI": 24.614975385024614,
+          "L2_MPKI": 24.614975385024614,
+          "LLC_MPKI": 24.614975385024614,
+          "DRAM_RQPI": 0.024711975288024712
+        },
+        "secondary": {
+          "instructions": 1000001,
+          "cycles": 2436722,
+          "branch_mispredicts": 0,
+          "L1D_load_hit": 6153,
+          "L1D_load_miss": 24615,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 0,
+          "L2_load_miss": 24615,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 0,
+          "LLC_load_miss": 24615,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 196.90360958238912,
+          "DRAM_read_row_hit": 7,
+          "DRAM_read_row_miss": 24705,
+          "DRAM_read_requests": 24712,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 24712,
+          "DRAM_dbus_congestion": 2.6547980894485455,
+          "DRAM_row_hit_rate": 0.00028326319197151184
+        },
+        "knobs": {
+          "branch_frequency": 8,
+          "branch_pattern": "constant",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 16384,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.2,
+          "memory_dependency": "dependent",
+          "independent_chains": 1,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    },
+    {
+      "turn": 2,
+      "probe": {
+        "knob_overrides": {
+          "working_set_kb": 1024
+        },
+        "hypothesis_tested": "cache",
+        "expected_outcome": "If the workload is cache capacity bound, shrinking the working set to fit within the LLC should cause a large IPC increase and a near-complete collapse of LLC_MPKI and DRAM_RQPI."
+      },
+      "result": {
+        "status": "OK",
+        "fingerprint": {
+          "IPC": 2.183903803693844,
+          "BR_MPKI": 15.362953911138266,
+          "L1D_MPKI": 24.616926149221552,
+          "L2_MPKI": 24.616926149221552,
+          "LLC_MPKI": 0.000999997000009,
+          "DRAM_RQPI": 9.99997000009e-07
+        },
+        "secondary": {
+          "instructions": 1000003,
+          "cycles": 457897,
+          "branch_mispredicts": 15363,
+          "L1D_load_hit": 6153,
+          "L1D_load_miss": 24617,
+          "L1D_load_miss_merge": 0,
+          "L2_load_hit": 0,
+          "L2_load_miss": 24617,
+          "L2_load_miss_merge": 0,
+          "LLC_load_hit": 24615,
+          "LLC_load_miss": 1,
+          "LLC_load_miss_merge": 0,
+          "LLC_miss_latency": 141.0,
+          "DRAM_read_row_hit": 0,
+          "DRAM_read_row_miss": 1,
+          "DRAM_read_requests": 1,
+          "DRAM_write_row_hit": 0,
+          "DRAM_write_row_miss": 0,
+          "DRAM_write_requests": 0,
+          "DRAM_total_requests": 1,
+          "DRAM_dbus_congestion": 0.0,
+          "DRAM_row_hit_rate": 0.0
+        },
+        "knobs": {
+          "branch_frequency": 8,
+          "branch_pattern": "random",
+          "branch_pattern_param": 50,
+          "load_branch_dependency": false,
+          "working_set_kb": 1024,
+          "stride_lines": 1,
+          "randomness": 0.5,
+          "reuse": 0.2,
+          "memory_dependency": "dependent",
+          "independent_chains": 1,
+          "alu_ops": 0,
+          "dependency_distance": 1
+        },
+        "cached": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "primary_bottleneck": "cache",
+    "confidence": 0.97,
+    "justification": "The workload is severely bottlenecked by LLC capacity misses. A probe that reduced the working set size to fit within the LLC ('working_set_kb': 1024) resulted in a +434.6% IPC improvement and eliminated all DRAM traffic. In contrast, a probe that eliminated all branch mispredictions had a negligible (+0.5%) impact, ruling out the frontend as the primary limiter. The evidence overwhelmingly points to LLC capacity as the primary bottleneck."
+  },
+  "oracle_ground_truth": "CACHE",
+  "oracle_speedup_pct": 85.5,
+  "correct": true,
+  "loop_time_sec": 124.99713349342346
+}
