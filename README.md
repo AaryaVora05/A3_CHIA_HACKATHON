@@ -8,19 +8,19 @@
 
 ## Abstract
 
-Identifying the dominant microarchitectural bottleneck of a workload usually requires hardware knowledge and targeted experiments beyond passive counter inspection. We present an active diagnosis framework for a black-box workload on a fixed machine. First, it reconstructs the workload's ChampSim fingerprint using a compact synthetic surrogate. An LLM agent then designs differential experiments by overriding semantic knobs, executes them on the same machine, and uses the resulting fingerprint changes to choose among branch prediction, cache capacity, DRAM timing, and DRAM bandwidth.
+Identifying the dominant microarchitectural bottleneck of a workload usually requires hardware knowledge and targeted experiments beyond passive counter inspection. We present an active diagnosis fram[...]
 
-We evaluate against ground truth defined by counterfactual machine relaxations on 50 SPEC CPU2017 traces from the DPC-3 ChampSim trace set. The framework achieves 72.0% accuracy over the full corpus, compared with 66.0% for a passive baseline that diagnoses without probing, and 89.2% on the 37 workloads whose surrogates satisfy the fidelity criterion, highlighting surrogate quality as a key factor in reliable diagnosis.
+We evaluate against ground truth defined by counterfactual machine relaxations on 50 SPEC CPU2017 traces from the DPC-3 ChampSim trace set. The framework achieves 72.0% accuracy over the full corpus, [...]
 
 ---
 
 ## 1. Introduction & Motivation
 
-Understanding why a workload performs poorly on a given processor is an important part of microarchitectural analysis. Architects use hardware performance counters to observe events such as branch mispredictions, cache misses, and memory activity. However, these measurements often describe the symptoms of poor performance rather than its exact cause. Different microarchitectural bottlenecks can produce similar observations, making the underlying limiting mechanism difficult to identify.
+Understanding why a workload performs poorly on a given processor is an important part of microarchitectural analysis. Architects use hardware performance counters to observe events such as branch mis[...]
 
-Several approaches help structure this diagnosis. Counter-based techniques, such as Top-Down Microarchitecture Analysis (TMA), organize hardware events into increasingly detailed bottleneck categories. These methods help narrow the search using measurements collected from the workload itself. Architects also use focused experiments and microbenchmarks to test specific hypotheses. Such experiments can isolate processor behavior and provide evidence that is difficult to obtain from the original workload alone. However, deciding which experiment to run next still requires significant architectural expertise.
+Several approaches help structure this diagnosis. Counter-based techniques, such as Top-Down Microarchitecture Analysis (TMA), organize hardware events into increasingly detailed bottleneck categories[...]
 
-This motivates a different form of automated diagnosis. Instead of only interpreting a fixed set of measurements, a diagnostic system can actively collect new evidence. When several explanations remain plausible, it can choose an experiment that helps distinguish between them. In this way, bottleneck diagnosis becomes an iterative process of forming hypotheses, testing them, and refining the diagnosis.
+This motivates a different form of automated diagnosis. Instead of only interpreting a fixed set of measurements, a diagnostic system can actively collect new evidence. When several explanations remai[...]
 
 ---
 ## 2. Experimental Results
@@ -86,29 +86,71 @@ The complete benchmark evaluation using `Gemini 2.5 Pro` across all 50 workloads
 
 ## 3. Repository Structure & Artifact Reproduction
 
-```
-a3-hackathon/
+```text
+A3_CHIA_HACKATHON/
+├── .gitignore
+├── README.md
+├── requirements.txt
 ├── agent/
-│   ├── chia_diagnostic_loop.py   # Main autonomous multi-turn CHIA loop 
-│   ├── prompts.py                # Structured Pydantic schemas, physical causal principles & prompts
-│   ├── run_probe.py              # Semantic probe generator, Pin tracer & ChampSim runner
-│   ├── micrograd_cloner.py       # Differentiable gradient descent proxy cloner
-│   └── evaluate_fidelity.py      # Normalized fidelity error & FOM calculation engine
+│   ├── __init__.py
+│   ├── check_probe.py
+│   ├── chia_diagnostic_loop.py
+│   ├── prompts.py
+│   ├── run_probe.py
+│   ├── semantic.py
+│   └── zero_shot_baseline.py
+├── clone/
+│   ├── distance.py
+│   ├── execution_profile.py
+│   ├── micrograd_cloner.py
+│   ├── observation.py
+│   ├── run_all_clones_4epoch.py
+│   └── tuner.py
+├── configs/
+│   ├── baseline.json
+│   ├── M0/
+│   │   ├── baseline.json
+│   │   ├── branch.json
+│   │   ├── cache.json
+│   │   ├── dram4.json
+│   │   ├── dram8.json
+│   │   ├── latency.json
+│   │   ├── mshr.json
+│   │   ├── rob.json
+│   │   ├── source_champsim_config.json
+│   │   ├── champsim_commit.txt
+│   │   └── bin/
+│   │       ├── m0_baseline
+│   │       ├── m0_branch
+│   │       ├── m0_cache
+│   │       ├── m0_dram4
+│   │       ├── m0_dram8
+│   │       ├── m0_latency
+│   │       ├── m0_mshr
+│   │       ├── m0_rob
+│   │       └── ...
+│   └── ...
 ├── probes/
 │   └── template/
-│       ├── probe.c               # 12-knob parameterized C proxy kernel template
-│       └── Makefile              # Pin instrumentation & compilation rules
-├── tools/
-│   ├── check_static.py           # Verification script for proxy binary compilation
-│   └── parse_stats.py            # ChampSim JSON metrics parser
+│       ├── probe.c
+│       └── probe.c.bak
 ├── results/
 │   ├── clones/
-│   │   ├── chia_diagnosis_summary.json  # Full 50-workload cumulative benchmark results
-│   │   └── *_diagnosis.json             # Complete multi-turn reasoning logs per trace
+│   │   ├── chia_diagnosis_summary.json
+│   │   ├── *_clone.json
+│   │   └── *_diagnosis.json
 │   └── oracle/
-│       └── oracle_analysis_6class.csv   # Ground-truth cycle-level oracle relaxation data
-├── requirements.txt              # Python virtual environment dependencies
-└── README.md                     # Research paper & documentation
+│       ├── <workload>/
+│       │   ├── baseline.json
+│       │   ├── branch.json
+│       │   ├── cache.json
+│       │   ├── dram4.json
+│       │   ├── latency.json
+│       │   ├── mshr.json
+│       │   ├── rob.json
+│       │   └── ...
+│       └── oracle_analysis_6class.csv
+└── ...
 ```
 
 ### Reproducing the 50-Workload Benchmark
@@ -128,4 +170,4 @@ cat results/clones/chia_diagnosis_summary.json
 
 ## 4. Conclusion
 
-This work demonstrates that coupling foundational LLMs  with differentiable semantic proxy cloning and active cycle-accurate probing solves the microarchitectural causal grounding gap. By replacing static correlational heuristics with counterfactual differential perturbations, it delivers an autonomous, highly interpretable, and mathematically verified bottleneck diagnosis engine.
+This work demonstrates that coupling foundational LLMs  with differentiable semantic proxy cloning and active cycle-accurate probing solves the microarchitectural causal grounding gap. By replacing st[...]
